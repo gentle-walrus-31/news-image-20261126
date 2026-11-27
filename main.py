@@ -67,6 +67,8 @@ def inspect_png(blob):
         die("first eight bytes are not the PNG signature")
     if len(blob) < 33 or blob[12:16] != b"IHDR":
         die("no IHDR chunk where a PNG header belongs")
+    if blob[-12:] != b"\x00\x00\x00\x00IEND\xaeB`\x82":
+        die("no valid IEND chunk at the end: the image is truncated")
     width, height = struct.unpack(">II", blob[16:24])
     if width != IMAGE_WIDTH or height != IMAGE_HEIGHT:
         die("image is %dx%d, expected %dx%d"
